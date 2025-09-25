@@ -8,57 +8,85 @@
 </head>
 <body>
   <div class="container">
-    <h2>Pokémon Card Pricing</h2>
-    <form method="POST">
-      <div class="form-group">
-        <label for="language">Language:</label>
-        <select id="language" name="language">
-          <option value="english">English</option>
-          <option value="japanese">Japanese</option>
-          <option value="chinese">Chinese</option>
-        </select>
+    <div class="main-content">
+      <h2>Pokémon Card Pricing</h2>
+      
+      <div class="form-section">
+        <form method="POST">
+          <div class="form-group">
+            <label for="language">Language:</label>
+            <select id="language" name="language">
+              <option value="english">English</option>
+              <option value="japanese">Japanese</option>
+              <option value="chinese">Chinese</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="set_name">Set Name:</label>
+            <input type="text" id="set_name" name="set_name" placeholder="Base Set, Crown Zenith, etc..." required>
+          </div>
+          <div class="form-group">
+            <label for="card_name">Card Name & Number:</label>
+            <input type="text" id="card_name" name="card_name" placeholder="charizard-ex-199" required>
+          </div>
+          <button type="submit">⚡ Search Price ⚡</button>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="set_name">Set Name:</label>
-        <input type="text" id="set_name" name="set_name" placeholder="Enter Set Name (e.g., Base Set, Crown Zenith)" required>
-      </div>
-      <div class="form-group">
-        <label for="card_name">Card Name & Number:</label>
-        <input type="text" id="card_name" name="card_name" placeholder="Enter Card Name & Number (e.g., charizard-ex-199)" required>
-      </div>
-      <button type="submit">Search Price</button>
-    </form>
 
-    {% if result %}
-      {% if result.error %}
-        <div class="error">
-          <strong>Error:</strong> {{ result.error }}
-        </div>
-      {% else %}
-        <div class="result">
-          <div class="card-details">
-            <strong>Language:</strong> {{ result.language }}<br>
-            <strong>Set:</strong> {{ result.set_name }}<br>
-            <strong>Card:</strong> {{ result.card_name }}
+      {% if result %}
+        {% if result.error %}
+          <div class="error">
+            <strong>💥 Error:</strong> {{ result.error }}
           </div>
-          
-          <div class="price-info">
-            <div class="price-box usd-box">
-              <h3>USD Price</h3>
-              <div class="price">${{ result.usd_price }}</div>
-              <div class="price-change">Change: ${{ result.usd_price_change }}</div>
+        {% else %}
+          <div class="results-container">
+            <div class="results-left">
+              <div class="results">
+                <h3>🎯 Card Found!</h3>
+                
+                <div class="card-details">
+                  <p><strong>🌍 Language:</strong> {{ result.language }}</p>
+                  <p><strong>📦 Set:</strong> {{ result.set_name }}</p>
+                  <p><strong>⭐ Card:</strong> {{ result.card_name }}</p>
+                </div>
+                
+                <div class="price-display">
+                  <strong>💵 USD: ${{ result.usd_price }}</strong>
+                  <div class="price-change {% if result.change_positive %}positive{% else %}negative{% endif %}">
+                    {{ result.usd_change_formatted }}
+                    {% if result.change_positive %}📈{% else %}📉{% endif %}
+                  </div>
+                </div>
+                
+                <div class="price-display">
+                  <strong>🍁 CAD: C${{ result.cad_price }}</strong>
+                  <div class="price-change {% if result.change_positive %}positive{% else %}negative{% endif %}">
+                    {{ result.cad_change_formatted }}
+                    {% if result.change_positive %}📈{% else %}📉{% endif %}
+                  </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                  <a href="{{ result.url }}" target="_blank" class="view-link">
+                    🔗 View on PriceCharting 🔗
+                  </a>
+                </div>
+              </div>
             </div>
-            <div class="price-box cad-box">
-              <h3>CAD Price</h3>
-              <div class="price">C${{ result.cad_price }}</div>
-              <div class="price-change">Change: C${{ result.cad_price_change }}</div>
+            
+            {% if result.card_image %}
+            <div class="card-image-section">
+              <div class="card-image-container">
+                <h4>🃏 Card Art</h4>
+                <img src="{{ result.card_image }}" alt="{{ result.card_name }}" class="card-image">
+                <div class="image-frame"></div>
+              </div>
             </div>
+            {% endif %}
           </div>
-          
-          <a href="{{ result.url }}" target="_blank" class="view-link">View on PriceCharting</a>
-        </div>
+        {% endif %}
       {% endif %}
-    {% endif %}
+    </div>
   </div>
 </body>
 </html>

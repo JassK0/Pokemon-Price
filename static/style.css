@@ -479,6 +479,130 @@ select:focus-visible,
   outline-offset: 2px;
 }
 
+/* Results Container Layout */
+.results-container {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+  align-items: flex-start;
+}
+
+.results-left {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card Image Section */
+.card-image-section {
+  flex: 0 0 280px;
+  position: sticky;
+  top: 20px;
+}
+
+.card-image-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--pokemon-blue);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.card-image-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pokemon-red), var(--pokemon-yellow), var(--pokemon-blue));
+  animation: rainbow-flow 3s linear infinite;
+}
+
+@keyframes rainbow-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.card-image-container h4 {
+  font-size: 1rem;
+  color: var(--pokemon-yellow);
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-image {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border-radius: 15px;
+  border: 3px solid var(--pokemon-yellow);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 203, 5, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  animation: card-float 4s ease-in-out infinite;
+}
+
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.card-image:hover {
+  transform: scale(1.05) rotate(2deg) translateY(-5px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 3px var(--pokemon-red),
+    0 0 0 6px var(--pokemon-yellow),
+    0 0 40px rgba(255, 203, 5, 0.6);
+}
+
+.image-frame {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 2px dashed var(--pokemon-blue);
+  border-radius: 12px;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: frame-pulse 3s ease-in-out infinite;
+}
+
+@keyframes frame-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.02); }
+}
+
+/* Responsive Design for Card Image */
+@media (max-width: 768px) {
+  .results-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .card-image-section {
+    flex: none;
+    position: static;
+  }
+  
+  .card-image-container {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
 /* Smooth transitions for better UX */
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;

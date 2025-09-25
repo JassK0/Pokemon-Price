@@ -380,10 +380,11 @@ def usd_to_cad(usd):
 
 
 
-def get_price(url):
+def get_price_and_image(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
 
+    # Get price data
     price = soup.find('span', class_='price js-price').text.strip()
     price_change = soup.find('span', class_='change').text.strip()
 
@@ -401,7 +402,23 @@ def get_price(url):
     price = round(price_float, 2)
     price_change = round(price_change_float, 2)
 
-    return price, price_change #usd
+    # Get card image
+    card_image = None
+    try:
+        # Look for the card image - PriceCharting typically has it in an img tag with specific classes
+        img_element = soup.find('img', class_='js-show-dialog') or soup.find('img', {'alt': True})
+        if img_element and img_element.get('src'):
+            card_image = img_element['src']
+            # Ensure it's a full URL
+            if card_image.startswith('//'):
+                card_image = 'https:' + card_image
+            elif card_image.startswith('/'):
+                card_image = 'https://www.pricecharting.com' + card_image
+    except Exception as e:
+        print(f"Error getting card image: {e}")
+        card_image = None
+
+    return price, price_change, card_image
     
     
     
@@ -425,7 +442,7 @@ def index():
         else:
             url = create_url(found_set, card_name)
             try:
-                usd_price, usd_price_change = get_price(url)
+                usd_price, usd_price_change, card_image = get_price_and_image(url)
                 cad_price = round(usd_to_cad(usd_price), 2)
                 cad_price_change = round(usd_to_cad(usd_price_change), 2)
                 
@@ -444,7 +461,8 @@ def index():
                     'language': language.title(),
                     'set_name': request.form.get('set_name', ''),
                     'card_name': request.form.get('card_name', ''),
-                    'change_positive': usd_price_change >= 0
+                    'change_positive': usd_price_change >= 0,
+                    'card_image': card_image
                 }
             except Exception as e:
                 result = {'error': 'Could not fetch price. Please check card name and set.'}
