@@ -388,7 +388,15 @@ def get_price(url):
     price_change = soup.find('span', class_='change').text.strip()
 
     price_float = float(price[1:])
-    price_change_float = float(price_change[2:])
+    
+    # Handle positive/negative price changes
+    if price_change.startswith('+$'):
+        price_change_float = float(price_change[2:])
+    elif price_change.startswith('-$'):
+        price_change_float = -float(price_change[2:])
+    else:
+        # Fallback for other formats
+        price_change_float = float(price_change[2:]) if len(price_change) > 2 else 0
 
     price = round(price_float, 2)
     price_change = round(price_change_float, 2)
@@ -420,15 +428,23 @@ def index():
                 usd_price, usd_price_change = get_price(url)
                 cad_price = round(usd_to_cad(usd_price), 2)
                 cad_price_change = round(usd_to_cad(usd_price_change), 2)
+                
+                # Format price changes with proper +/- signs
+                usd_change_formatted = f"+${abs(usd_price_change)}" if usd_price_change >= 0 else f"-${abs(usd_price_change)}"
+                cad_change_formatted = f"+C${abs(cad_price_change)}" if cad_price_change >= 0 else f"-C${abs(cad_price_change)}"
+                
                 result = {
                     'url': url,
                     'usd_price': usd_price,
                     'usd_price_change': usd_price_change,
+                    'usd_change_formatted': usd_change_formatted,
                     'cad_price': cad_price,
                     'cad_price_change': cad_price_change,
+                    'cad_change_formatted': cad_change_formatted,
                     'language': language.title(),
                     'set_name': request.form.get('set_name', ''),
-                    'card_name': request.form.get('card_name', '')
+                    'card_name': request.form.get('card_name', ''),
+                    'change_positive': usd_price_change >= 0
                 }
             except Exception as e:
                 result = {'error': 'Could not fetch price. Please check card name and set.'}
