@@ -435,8 +435,10 @@ def index():
         card_name = request.form.get('card_name', '').lower().replace(" ", "-")
         
         set_list = space_replace(pokemon_sets.copy())
+        # fancy_list = pokemon_sets.copy()
         found_set = find_name(language, set_name, set_list)
-        
+        fancy_set = find_name(language, set_name, set_list)
+
         if "not found" in found_set:
             result = {'error': found_set}
         else:
@@ -462,7 +464,8 @@ def index():
                     'set_name': request.form.get('set_name', ''),
                     'card_name': request.form.get('card_name', ''),
                     'change_positive': usd_price_change >= 0,
-                    'card_image': card_image
+                    'card_image': card_image,
+                    'fancy_': fancy_set
                 }
             except Exception as e:
                 result = {'error': 'Could not fetch price. Please check card name and set.'}
@@ -470,4 +473,5 @@ def index():
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
+    
     app.run(debug=True)
